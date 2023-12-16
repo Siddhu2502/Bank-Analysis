@@ -253,16 +253,15 @@ object MySQLSpark {
     // -------------------------------------------------------------------------------------
     /* charts time series */
 
-    // monthly trend by issue date
-    // select 
-    //    month(issue_date)
-    //    datename(month, issue_date) as month_name, 
-    //    count(id) as total_loan_applications, 
-    //    sum(loan_amount) as total_funded_amount,
-    //    sum(total_payment) as total_received_amount
-    // from bankloan
-    // group by month(issue_date), datename(month, issue_date)
-    // order by month(issue_date)
+    // SELECT 
+    //    MONTH(issue_date),
+    //    MONTHNAME(issue_date) AS month_name, 
+    //    COUNT(id) AS total_loan_applications, 
+    //    SUM(loan_amount) AS total_funded_amount,
+    //    SUM(total_payment) AS total_received_amount
+    // FROM bankloan
+    // GROUP BY MONTH(issue_date), MONTHNAME(issue_date)
+    // ORDER BY MONTH(issue_date)
     val monthly_trend = df.withColumn("month", month(col("issue_date")))
                           .withColumn("month_name", date_format(col("issue_date"), "MMMM"))
                           .groupBy("month", "month_name")
