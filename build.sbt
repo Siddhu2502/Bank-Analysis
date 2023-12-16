@@ -12,5 +12,7 @@ lazy val root = project
       "org.apache.spark" %% "spark-sql" % "3.5.0",
       "org.apache.spark" %% "spark-mllib" % "3.5.0",
       "org.mongodb.scala" %% "mongo-scala-driver" % "4.11.0",
+      "org.mongodb.spark" %% "mongo-spark-connector" % "3.0.1",
+      "mysql" % "mysql-connector-java" % "8.0.23"
     )
   )
