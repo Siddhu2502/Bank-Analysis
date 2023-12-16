@@ -82,8 +82,8 @@ object MySQLSpark {
     // take the value of mtd subtract with pmtd and divide by pmtd and multiply by 100
     // select (sum(loan_amount) - (select sum(loan_amount) as total_funded_amount from bankloan where month(issue_date) = 11 and year(issue_date) = 2021)) / (select sum(loan_amount) as total_funded_amount from bankloan where month(issue_date) = 11 and year(issue_date) = 2021) * 100 as mom_percentage from bankloan where month(issue_date) = 12 and year(issue_date) = 2021
     val MOM_percentage_loan_amount = df.filter(month(col("issue_date")) === 12 && year(col("issue_date")) === 2021)
-      .agg(((sum("loan_amount") - total_funded_amount_november.first().getDouble(0)) / total_funded_amount_november.first().getDouble(0)) * 100 as "MOM_percentage_loan_amount")
-    MOM_percentage_loan_amount.show()
+      .agg(((sum("loan_amount") - total_funded_amount_november.first().getLong(0).toDouble) / total_funded_amount_november.first().getLong(0).toDouble) * 100 as "MOM_percentage_loan_amount")
+    MOM_percentage_loan_amount.show()      
     
 // ----------------------------- received amount metrics -----------------------------
 
@@ -107,8 +107,8 @@ object MySQLSpark {
     // calculate MOM percentage
     // take the value of mtd subtract with pmtd and divide by pmtd and multiply by 100
     // select (sum(total_payment) - (select sum(total_payment) as total_received_amount from bankloan where month(issue_date) = 11 and year(issue_date) = 2021)) / (select sum(total_payment) as total_received_amount from bankloan where month(issue_date) = 11 and year(issue_date) = 2021) * 100 as mom_percentage from bankloan where month(issue_date) = 12 and year(issue_date) = 2021
-    val MOM_percentage_received_amount = df.filter(month(col("issue_date")) === 12 && year(col("issue_date")) === 2021)
-      .agg(((sum("total_payment") - total_received_amount_november.first().getDouble(0)) / total_received_amount_november.first().getDouble(0)) * 100 as "MOM_percentage_received_amount")
+    val MOM_percentage_received_amount = df.filter(month(col("issue_date")) === 12 && year(col("issue_date"))==2021)
+      .agg(((sum("total_payment") - total_received_amount_november.first().getLong(0).toDouble)/ total_received_amount_november.first().getLong(0).toDouble)*100 as "MOM_percentage_received_amount")
 
 // ----------------------------- Interest metrics -----------------------------
 
@@ -130,9 +130,8 @@ object MySQLSpark {
     // calculate MOM percentage
     // take the value of mtd subtract with pmtd and divide by pmtd and multiply by 100
     // select (round(avg(interest_rate) * 100, 5) - (select round(avg(interest_rate) * 100, 5) as average_interest_rate from bankloan where month(issue_date) = 11 and year(issue_date) = 2021)) / (select round(avg(interest_rate) * 100, 5) as average_interest_rate from bankloan where month(issue_date) = 11 and year(issue_date) = 2021) * 100 as mom_percentage from bankloan where month(issue_date) = 12 and year(issue_date) = 2021
-    val MOM_percentage_interest_rate = df.filter(month(col("issue_date")) === 12 && year(col("issue_date")) === 2021)
-      .agg(((col("MTD_average_interest_rate") - col("PMTD_average_interest_rate")) / col("PMTD_average_interest_rate")) * 100 as "MOM_percentage_interest_rate")
-
+    val MOM_percentage_interest_rate = (MTD_average_interest_rate.first().getDouble(0) - PMTD_average_interest_rate.first().getDouble(0)) / PMTD_average_interest_rate.first().getDouble(0) * 100
+    println(s"MOM Percentage Interest Rate: $MOM_percentage_interest_rate")
 
 // ----------------------------- Debt to income ratio metrics -----------------------------
 
@@ -140,7 +139,6 @@ object MySQLSpark {
     // select round(avg(dti), 5) as average_debt_to_income_ratio from bankloan
     val average_debt_to_income_ratio = df.agg(round(avg("dti"), 5) as "average_debt_to_income_ratio")
     average_debt_to_income_ratio.show()
-
 
     // Average MTD Debt to income ratio on December month
     // select round(avg(dti), 5) as average_debt_to_income_ratio from bankloan where month(issue_date) = 12 and year(issue_date) = 2021
@@ -157,9 +155,8 @@ object MySQLSpark {
     // calculate MOM percentage
     // take the value of mtd subtract with pmtd and divide by pmtd and multiply by 100
     // select (round(avg(dti), 5) - (select round(avg(dti), 5) as average_debt_to_income_ratio from bankloan where month(issue_date) = 11 and year(issue_date) = 2021)) / (select round(avg(dti), 5) as average_debt_to_income_ratio from bankloan where month(issue_date) = 11 and year(issue_date) = 2021) * 100 as mom_percentage from bankloan where month(issue_date) = 12 and year(issue_date) = 2021
-    val MOM_percentage_debt_to_income_ratio = df.filter(month(col("issue_date")) === 12 && year(col("issue_date")) === 2021)
-      .agg(((col("MTD_average_debt_to_income_ratio") - col("PMTD_average_debt_to_income_ratio")) / col("PMTD_average_debt_to_income_ratio")) * 100 as "MOM_percentage_debt_to_income_ratio")
-    MOM_percentage_debt_to_income_ratio.show()
+    val MOM_percentage_debt_to_income_ratio = (MTD_average_debt_to_income_ratio.first().getDouble(0) - PMTD_average_debt_to_income_ratio.first().getDouble(0)) / PMTD_average_debt_to_income_ratio.first().getDouble(0) * 100
+    println(s"MOM Percentage Debt to Income Ratio: $MOM_percentage_debt_to_income_ratio")
 
     // monthly average debt to income ratio
     // select
@@ -175,7 +172,9 @@ object MySQLSpark {
     monthly_average_debt_to_income_ratio.show()
 
 //  ----------------------------------------------------------------------------------------------------------------------------------------------------
-    /* Good Loan vs Bad Loan statuses */
+  /* Good Loan vs Bad Loan statuses */
+
+  // ----------------------------- good loan metrics -----------------------------
 
     // loan status (select all the unique loan status)
     // select distinct(loan_status) from bankloan
@@ -202,6 +201,8 @@ object MySQLSpark {
     val good_loan_received_amount = df.agg(sum(when(col("loan_status") === "Fully Paid" || col("loan_status") === "Current", col("total_payment"))) as "good_loan_received_amount")
     good_loan_received_amount.show()
 
+  // ----------------------------- bad loan metrics -----------------------------
+
     // total percentage for bad loan status
     // select (count(case when loan_status = "Charged Off" then id end)*100) / count(id) as bad_loan_percentage from bankloan
     val bad_loan_percentage = df.agg((count(when(col("loan_status") === "Charged Off", col("id"))) * 100) / count(col("id")) as "bad_loan_percentage")
@@ -222,6 +223,8 @@ object MySQLSpark {
     val loan_status_grid = df.groupBy("loan_status")
       .agg(count("id") as "loancount", sum("total_payment") as "total_amount_received", sum("loan_amount") as "total_funded_amount", avg("int_rate") * 100 as "interest_rate", avg("dti") * 100 as "dti")
     loan_status_grid.show()
+
+// -------------------------------------------------------------------------------------
 
     // MTD loan status grid
     // select 
@@ -348,7 +351,6 @@ object MySQLSpark {
                                            sum("total_payment").alias("total_received_amount"))
                                       .orderBy(sum("loan_amount").desc)
     home_ownership_analysis.show()
-
 
   }
 }
