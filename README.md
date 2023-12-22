@@ -1,5 +1,4 @@
-
-# About the Project
+## About the Project
 This is a project which focuses on detailed analysis of Bank Loan using Spark, Scala, MySQL and Grafana. The project is divided into 3 parts:
 1. Data Analysis using Spark and Scala
 2. Data Visualization using Grafana
@@ -153,3 +152,11 @@ the grades are divided as very low, low, medium, high, very high and the sub gra
 * The bank should be very cautious while giving loan to the people with grade G as they are the ones who are very high risk and the bank should try to give loan to the people with grade A and B as they are the ones who are very low risk.
 
 
+----------
+
+
+### **This project was made possible by**
+* Siddharth
+* Abinaya
+* Sanjana
+* Ronith
