@@ -1,22 +1,17 @@
-## sbt project compiled with Scala 3
-
-### Usage
-
 This is a normal sbt project. You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
-
-For more information on the sbt-dotty plugin, see the
-[scala3-example-project](https://github.com/scala/scala3-example-project/blob/main/README.md).
 
 
 <!-- configuring MySQL -->
-
+```sql
 <!-- create database -->
 CREATE DATABASE IF NOT EXISTS bankloan;
 GRANT ALL PRIVILEGES ON bankloaddb.* TO '[your user name]'@'localhost';
-
+```
 eg: GRANT ALL PRIVILEGES ON bankloaddb.* TO 'siddharth'@'localhost'; 
 
-<!-- create table -->
+
+```sql
+-- <!-- create table -->
 CREATE TABLE bankloan (
     id BIGINT NOT NULL,
     address_state VARCHAR(100),
@@ -44,16 +39,19 @@ CREATE TABLE bankloan (
     total_payment BIGINT,
     PRIMARY KEY (id)
 );
+```
 
-<!-- move file here if you dont get permission -->
+```sql 
+-- <!-- move file here if you dont get permission -->
 LOAD DATA INFILE '/var/lib/mysql-files/financial_loan.csv' INTO TABLE bankloan FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
-
+```
 
 <!-- sbt use the normal stuff -->
 sbt compile
 sbt run
 
 <!-- graphana -->
+sudo systemctl start grafana-server
 http://localhost:3000/login
 admin/admin
 

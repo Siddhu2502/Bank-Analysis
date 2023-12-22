@@ -1,5 +1,7 @@
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
+import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.ml.regression.LinearRegression
 
 object MySQLSpark {
   def main(args: Array[String]): Unit = {
@@ -27,7 +29,7 @@ object MySQLSpark {
     df.show(10)
 
 //  ----------------------------------------------------------------------------------------------------------------------------------------------------
-    /* Key Performances of the Bank */
+    /* Key Performances of the Bank  by siddharth */
 
 // ----------------------------- loan application metrics -----------------------------
 
@@ -171,8 +173,22 @@ object MySQLSpark {
       .orderBy("month")
     monthly_average_debt_to_income_ratio.show()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //  ----------------------------------------------------------------------------------------------------------------------------------------------------
-  /* Good Loan vs Bad Loan statuses */
+  /* Good Loan vs Bad Loan statuses  by abi*/
 
   // ----------------------------- good loan metrics -----------------------------
 
@@ -183,39 +199,61 @@ object MySQLSpark {
 
     // total percentage for good loan status
     // select (count(case when loan_status = "Fully Paid" or loan_status = "Current" then id end)*100) / count(id) as good_loan_percentage from bankloan
-    val good_loan_percentage = df.agg((count(when(col("loan_status") === "Fully Paid" || col("loan_status") === "Current", col("id"))) * 100) / count(col("id")) as "good_loan_percentage")
+    val good_loan_percentage = df.agg((
+      count(
+        when(
+          col("loan_status") === "Fully Paid" || col("loan_status") === "Current", 
+          col("id"))) * 100) / count(col("id")) as "good_loan_percentage")
     good_loan_percentage.show()
 
     // good loan applications
     // select count(case when loan_status = "Fully Paid" or loan_status = "Current" then id end) as good_loan_application from bankloan
-    val good_loan_application = df.agg(count(when(col("loan_status") === "Fully Paid" || col("loan_status") === "Current", col("id"))) as "good_loan_application")
+    val good_loan_application = df.agg(
+      count(
+        when(
+          col("loan_status") === "Fully Paid" || col("loan_status") === "Current", 
+          col("id"))) as "good_loan_application")
     good_loan_application.show()
 
     // good loan funded amount
     // select sum(case when loan_status = "Fully Paid" or loan_status = "Current" then loan_amount end) as good_loan_funded_amount from bankloan
-    val good_loan_funded_amount = df.agg(sum(when(col("loan_status") === "Fully Paid" || col("loan_status") === "Current", col("loan_amount"))) as "good_loan_funded_amount")
+    val good_loan_funded_amount = df.agg(
+      sum(
+        when(
+          col("loan_status") === "Fully Paid" || col("loan_status") === "Current", 
+          col("loan_amount"))) as "good_loan_funded_amount")
     good_loan_funded_amount.show()
 
     // good loan received amount
     // select sum(case when loan_status = "Fully Paid" or loan_status = "Current" then total_payment end) as good_loan_received_amount from bankloan
-    val good_loan_received_amount = df.agg(sum(when(col("loan_status") === "Fully Paid" || col("loan_status") === "Current", col("total_payment"))) as "good_loan_received_amount")
+    val good_loan_received_amount = df.agg(
+      sum(when(col("loan_status") === "Fully Paid" || col("loan_status") === "Current", 
+      col("total_payment"))) as "good_loan_received_amount")
     good_loan_received_amount.show()
 
   // ----------------------------- bad loan metrics -----------------------------
 
     // total percentage for bad loan status
     // select (count(case when loan_status = "Charged Off" then id end)*100) / count(id) as bad_loan_percentage from bankloan
-    val bad_loan_percentage = df.agg((count(when(col("loan_status") === "Charged Off", col("id"))) * 100) / count(col("id")) as "bad_loan_percentage")
+    val bad_loan_percentage = df.agg((
+      count(when(col("loan_status") === "Charged Off", col("id"))) * 100) / 
+      count(col("id")) as "bad_loan_percentage")
     bad_loan_percentage.show()
 
     // bad loan applications
     // select count(case when loan_status = "Charged Off" then id end) as bad_loan_application from bankloan
-    val bad_loan_application = df.agg(count(when(col("loan_status") === "Charged Off", col("id"))) as "bad_loan_application")
+    val bad_loan_application = df.agg(
+      count(when(col("loan_status") === "Charged Off", 
+      col("id"))) as "bad_loan_application")
     bad_loan_application.show()
 
     // bad loan funded amount
     // select sum(case when loan_status = "Charged Off" then loan_amount end) as bad_loan_funded_amount from bankloan
-    val bad_loan_funded_amount = df.agg(sum(when(col("loan_status") === "Charged Off", col("loan_amount"))) as "bad_loan_funded_amount")
+    val bad_loan_funded_amount = df.agg(
+      sum(
+        when(
+          col("loan_status") === "Charged Off", col("loan_amount"))) 
+          as "bad_loan_funded_amount")
     bad_loan_funded_amount.show()
 
     // loan status grid 
@@ -250,8 +288,71 @@ object MySQLSpark {
       .agg(count("id") as "loancount", sum("total_payment") as "total_amount_received", sum("loan_amount") as "total_funded_amount", avg("int_rate") * 100 as "interest_rate", avg("dti") * 100 as "dti")
     PMTD_loan_status_grid.show()
 
+    
+    // create partition based on address_state
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
     // -------------------------------------------------------------------------------------
-    /* charts time series */
+    /* Analysis based on classes of people Sanjana */
+
+    // Find the loan with the highest and lowest annual income
+    // Assuming bankloanDF is your DataFrame containing the bank loan data
+
+
+
+    print(" =================================== SANJANA =====================================")
+    print(" =================================== SANJANA =====================================")
+    print(" =================================== SANJANA =====================================")
+    print(" =================================== SANJANA =====================================")
+    print(" =================================== SANJANA =====================================")
+
+    // Find the record with the highest annual income
+    val maxIncomeRecord = df.orderBy(col("annual_income").desc).limit(1)
+    maxIncomeRecord.show()
+
+    // Find the record with the lowest annual income
+
+    val minIncomeRecord = df.orderBy(col("annual_income").asc).limit(1)
+    minIncomeRecord.show()
+
+
+
+
+
+    val categorizedData = df.withColumn("annual_income_group",
+      when(col("annual_income") <= 25000, "Poor")
+        .when(col("annual_income").between(25001, 75000), "Middle Class")
+        .otherwise("High Class"))
+
+    val groupCounts = categorizedData.groupBy("annual_income_group")
+      .agg(count("id").alias("total_loan_applications"))
+      .orderBy("annual_income_group")
+    groupCounts.show()
+
+
+
+
+
+
+
+
+
+
+
+    // -------------------------------------------------------------------------------------
+    /* charts time series Generic Analysis */
 
     // SELECT 
     //    MONTH(issue_date),
@@ -351,5 +452,82 @@ object MySQLSpark {
                                       .orderBy(sum("loan_amount").desc)
     home_ownership_analysis.show()
 
+    // loan analysis based on different annual income
+    // select
+    //    case
+    //        when annual_income <= 50000 then "Poor"
+    //        when annual_income >= 50001 and annual_income <= 100000 then "Middle Class"
+    //        when annual_income >= 100001 and annual_income <= 150000 then "High Class"
+    //        end as annual_income_group,
+    //    count(id) as total_loan_applications,
+    //    sum(loan_amount) as total_funded_amount,
+    //    sum(total_payment) as total_received_amount
+    // from bankloan
+    // group by annual_income_group
+    // order by sum(loan_amount)
+
+    val annual_income_analysis = df.withColumn("annual_income_group", when(col("annual_income") <= 50000, "Poor")
+      .when(col("annual_income") >= 50001 && col("annual_income") <= 100000, "Middle Class")
+      .when(col("annual_income") >= 100001 && col("annual_income") <= 150000, "High Class"))
+      .groupBy("annual_income_group")
+      .agg(count("id").alias("total_loan_applications"), 
+           sum("loan_amount").alias("total_funded_amount"), 
+           sum("total_payment").alias("total_received_amount"))
+      .orderBy(sum("loan_amount").desc)
+    annual_income_analysis.show()
+
+
+
+
+
+
+
+
+
+
+
+
+    // ------------ ronith part
+
+    // ----------------------------- Machine Learning Task -----------------------------
+
+    print(" ############################## Machine Learning Task ############################## ")
+    print(" ############################## Machine Learning Task ############################## ")
+    print(" ############################## Machine Learning Task ############################## ")
+
+    // Selecting relevant features for the machine learning model
+    val assembler = new VectorAssembler()
+      .setInputCols(Array("int_rate", "dti"))
+      .setOutputCol("features")
+      
+    val assembledDF = assembler.transform(df)
+      
+    // Splitting the dataset into training and testing sets
+    val Array(trainingData, testData) = assembledDF.randomSplit(Array(0.8, 0.2), seed = 1234)
+      
+    // Creating a Linear Regression model
+    val lr = new LinearRegression()
+      .setLabelCol("loan_amount")
+      .setFeaturesCol("features")
+      
+    // Training the model
+    val lrModel = lr.fit(trainingData)
+      
+    // Making predictions on the test set
+    val predictions = lrModel.transform(testData)
+      
+    // Displaying prediction results
+    predictions.select("loan_amount", "prediction", "int_rate", "dti", "features").show()
+      
+    // Evaluating the model performance (you can use other metrics based on your requirements)
+    val evaluator = new org.apache.spark.ml.evaluation.RegressionEvaluator()
+      .setLabelCol("loan_amount")
+      .setPredictionCol("prediction")
+      .setMetricName("rmse")
+      
+    val rmse = evaluator.evaluate(predictions)
+    println(s"Root Mean Squared Error (RMSE) on test data: $rmse")
+
   }
 }
+
