@@ -7,7 +7,7 @@ object MySQLSpark {
   def main(args: Array[String]): Unit = {
     val spark = SparkSession.builder
       .appName("bankloan")
-      .master("local[*]")  // Add this line
+      .master("local[*]")
       .getOrCreate()
 
     // connect mysql using jdbc database name is bankloaddb and table name is bankloan
