@@ -29,7 +29,7 @@ object MySQLSpark {
     df.show(10)
 
 //  ----------------------------------------------------------------------------------------------------------------------------------------------------
-    /* Key Performances of the Bank  by siddharth */
+    /* Key Performances of the Bank */
 
 // ----------------------------- loan application metrics -----------------------------
 
@@ -174,22 +174,6 @@ object MySQLSpark {
     monthly_average_debt_to_income_ratio.show()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//  ----------------------------------------------------------------------------------------------------------------------------------------------------
-  /* Good Loan vs Bad Loan statuses  by abi*/
-
   // ----------------------------- good loan metrics -----------------------------
 
     // loan status (select all the unique loan status)
@@ -288,36 +272,11 @@ object MySQLSpark {
       .agg(count("id") as "loancount", sum("total_payment") as "total_amount_received", sum("loan_amount") as "total_funded_amount", avg("int_rate") * 100 as "interest_rate", avg("dti") * 100 as "dti")
     PMTD_loan_status_grid.show()
 
-    
-    // create partition based on address_state
-    
-
-
-
-
-
-
-
-
-
-
-
-
 
     // -------------------------------------------------------------------------------------
-    /* Analysis based on classes of people Sanjana */
 
     // Find the loan with the highest and lowest annual income
     // Assuming bankloanDF is your DataFrame containing the bank loan data
-
-
-
-    print(" =================================== SANJANA =====================================")
-    print(" =================================== SANJANA =====================================")
-    print(" =================================== SANJANA =====================================")
-    print(" =================================== SANJANA =====================================")
-    print(" =================================== SANJANA =====================================")
-
     // Find the record with the highest annual income
     val maxIncomeRecord = df.orderBy(col("annual_income").desc).limit(1)
     maxIncomeRecord.show()
@@ -326,10 +285,6 @@ object MySQLSpark {
 
     val minIncomeRecord = df.orderBy(col("annual_income").asc).limit(1)
     minIncomeRecord.show()
-
-
-
-
 
     val categorizedData = df.withColumn("annual_income_group",
       when(col("annual_income") <= 25000, "Poor")
@@ -340,16 +295,6 @@ object MySQLSpark {
       .agg(count("id").alias("total_loan_applications"))
       .orderBy("annual_income_group")
     groupCounts.show()
-
-
-
-
-
-
-
-
-
-
 
     // -------------------------------------------------------------------------------------
     /* charts time series Generic Analysis */
@@ -477,17 +422,6 @@ object MySQLSpark {
     annual_income_analysis.show()
 
 
-
-
-
-
-
-
-
-
-
-
-    // ------------ ronith part
 
     // ----------------------------- Machine Learning Task -----------------------------
 
